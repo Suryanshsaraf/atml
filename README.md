@@ -24,8 +24,24 @@ atml/
 │   ├── nab_ambient_temperature_system_failure.csv  # Numenta Anomaly Benchmark Sensor Dataset
 │   └── chicago_beach_weather_automated_sensors.csv # Chicago Beach AWS Hourly Sensor Dataset
 ├── download_datasets.py                    # Automated dataset downloader script
+├── train_and_evaluate.py                   # Complete ML/DL Training & Evaluation Benchmark Script
 ├── README.md                               # Project documentation & dataset evaluation guide
 └── .gitignore                              # Git ignore rules
+```
+
+---
+
+## 🚀 Running on Google Colab
+
+To run the complete training pipeline directly in Google Colab:
+
+```python
+# 1. Clone this repository into Colab
+!git clone https://github.com/Suryanshsaraf/atml.git
+%cd atml
+
+# 2. Execute full training and benchmarking script
+!python train_and_evaluate.py
 ```
 
 ---
@@ -47,16 +63,6 @@ We evaluated multiple open-source weather sensor datasets across Kaggle, NOAA, N
 
 ---
 
-## ⚡ How to Download / Refresh Datasets
-
-To download or re-fetch all datasets automatically, run:
-
-```bash
-python download_datasets.py
-```
-
----
-
 ## 🎯 Target Anomaly Injection Modes for Evaluation
 
 1. **Impulse Spikes / Drops:** Instant extreme parameter jumps ($\Delta T > \pm 15^\circ\text{C}$).
@@ -68,9 +74,8 @@ python download_datasets.py
 
 ---
 
-## 🤖 Algorithms to Benchmark
+## 🤖 Algorithms Benchmarked
 
 * **Isolation Forest (IF)**
 * **Local Outlier Factor (LOF)**
-* **One-Class SVM (OCSVM)**
-* **Autoencoder Neural Networks (LSTM-AE / MLP-AE)**
+* **Deep Autoencoder (Keras Neural Network)**
