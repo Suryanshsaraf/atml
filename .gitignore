@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+devel/
+*.manifest
+*.spec
+
+# Jupyter / Virtualenv
+.venv
+venv/
+ENV/
+.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+*.swp
