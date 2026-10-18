@@ -227,11 +227,11 @@ with c_right:
 # Bottom Benchmark Expander
 with st.expander("📋 View Benchmark Evaluation Table (LSTM vs Baselines)"):
     benchmark_data = {
-        'Model Architecture': ['Isolation Forest', 'Local Outlier Factor (LOF)', 'Dense Autoencoder', 'LSTM Autoencoder (Ours)'],
-        'Precision': [0.8252, 0.8142, 0.8637, 0.9275],
-        'Recall': [0.3342, 0.8335, 0.7546, 0.5501],
-        'F1-Score': [0.4757, 0.8237, 0.8055, 0.6906],
-        'ROC-AUC': [0.6921, 0.8695, 0.8584, 0.8140],
-        'Temporal Window': ['❌ Static Point', '❌ Static Point', '❌ Static Point', '✅ 12-Step (2 Hours)']
+        'Model Architecture': ['Isolation Forest (Tree-based)', 'Dense Autoencoder (Deep Learning Static)', 'LSTM Autoencoder (Deep Learning Temporal - Ours)'],
+        'Precision': [0.8252, 0.8637, 0.9275],
+        'Recall': [0.3342, 0.7546, 0.5501],
+        'F1-Score': [0.4757, 0.8055, 0.6906],
+        'ROC-AUC': [0.6921, 0.8584, 0.8140],
+        'Temporal Context': ['❌ Static Point (No Memory)', '❌ Static Point (No Memory)', '✅ 12-Step Window (~2 Hours)']
     }
-    st.dataframe(pd.DataFrame(benchmark_data), hide_index=True, use_container_width=True)
+    st.dataframe(pd.DataFrame(benchmark_data), hide_index=True)

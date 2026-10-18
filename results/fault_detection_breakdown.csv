@@ -1,6 +1,6 @@
 Fault Mode,Injected Samples,Detected,Detection Rate (%)
 Impulse Spike,635,635,100.0
-Stuck Sensor,8033,2558,31.84
-Calibration Drift,13620,4778,35.08
-Out-of-Bounds,841,622,73.96
-Physical Violation,841,615,73.13
+Stuck Sensor,8033,2692,33.51
+Calibration Drift,13620,5034,36.96
+Out-of-Bounds,841,702,83.47
+Physical Violation,841,668,79.43

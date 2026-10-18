@@ -21,40 +21,25 @@ def main():
     data_dir = os.path.join(base_dir, "data")
     os.makedirs(data_dir, exist_ok=True)
     
-    datasets = [
-        {
-            "name": "Jena Climate Dataset (MPI-BGC)",
-            "url": "https://storage.googleapis.com/tensorflow/tf-keras-datasets/jena_climate_2009_2016.csv.zip",
-            "filename": "jena_climate_2009_2016.csv.zip",
-            "is_zip": True
-        },
-        {
-            "name": "Numenta Anomaly Benchmark (NAB) - Ambient Temperature System Failure",
-            "url": "https://raw.githubusercontent.com/numenta/NAB/master/data/realKnownCause/ambient_temperature_system_failure.csv",
-            "filename": "nab_ambient_temperature_system_failure.csv",
-            "is_zip": False
-        },
-        {
-            "name": "Chicago Beach Weather Stations Automated Sensors",
-            "url": "https://data.cityofchicago.org/api/views/k7hf-8y75/rows.csv?accessType=DOWNLOAD",
-            "filename": "chicago_beach_weather_automated_sensors.csv",
-            "is_zip": False
-        }
-    ]
+    csv_path = os.path.join(data_dir, "jena_climate_2009_2016.csv")
+    if os.path.exists(csv_path):
+        print(f"Dataset already exists at: {csv_path}")
+        return
 
-    for ds in datasets:
-        dest_path = os.path.join(data_dir, ds["filename"])
-        print(f"\n==========================================")
-        print(f"Processing: {ds['name']}")
-        print(f"==========================================")
-        if download_file(ds["url"], dest_path):
-            if ds.get("is_zip"):
-                print(f"Extracting zip archive: {dest_path}...")
-                with zipfile.ZipFile(dest_path, 'r') as zip_ref:
-                    zip_ref.extractall(data_dir)
-                print(f"Successfully extracted zip contents to {data_dir}")
+    url = "https://storage.googleapis.com/tensorflow/tf-keras-datasets/jena_climate_2009_2016.csv.zip"
+    zip_path = os.path.join(data_dir, "jena_climate_2009_2016.csv.zip")
+    
+    print("\n==========================================")
+    print("Downloading Jena Climate Dataset (MPI-BGC)")
+    print("==========================================")
+    if download_file(url, zip_path):
+        print(f"Extracting zip archive: {zip_path}...")
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(data_dir)
+        os.remove(zip_path)
+        print(f"Extracted to {csv_path} and cleaned up zip archive.")
 
-    print("\nDataset download process completed!")
+    print("\nDataset preparation completed!")
 
 if __name__ == "__main__":
     main()

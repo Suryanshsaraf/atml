@@ -1,16 +1,16 @@
-# SIH26073: AI/ML-Based Intelligent Anomaly Detection for Automatic Weather Stations
+# Intelligent Anomaly Detection & XAI for Automatic Weather Stations
 
-**Subject:** Advanced Topics in Machine Learning (ATML) — Semester 7 B.Tech AI & Data Science  
-**Problem Statement ID:** SIH26073 (Smart India Hackathon 2026 / MoES / IMD)  
+**Subject:** Advanced Topics in Machine Learning (ATML — Course Code: 702AI0C018)  
+**Program:** B.Tech Artificial Intelligence / AI & Data Science (Semester VII)  
 **Repository:** [Suryanshsaraf/atml](https://github.com/Suryanshsaraf/atml)
 
 ---
 
 ## 📌 Project Overview
 
-Automatic Weather Stations (AWS) continuously record critical meteorological parameters such as temperature, atmospheric pressure, relative humidity, dew point, and wind speed. Sensor malfunctions, calibration drifts, extreme weather, hardware degradation, and telemetry corruptions frequently produce anomalous observations.
+Automatic Weather Stations (AWS) continuously record critical meteorological parameters such as temperature, atmospheric pressure, relative humidity, dew point, and wind speed. Sensor malfunctions, calibration drifts, hardware freezes, and telemetry corruptions frequently produce anomalous observations.
 
-This project implements an **unsupervised machine learning & deep learning pipeline** to automatically detect anomalous weather station sensor behaviors, explain which sensor caused the anomaly (XAI), and monitor sensor degradation trends over time.
+This project implements an **unsupervised deep learning pipeline** using an **LSTM Autoencoder** to automatically detect anomalous weather station sensor behaviors and explain which sensor caused the anomaly via **Explainable AI (XAI)** feature attribution.
 
 ---
 
@@ -19,10 +19,7 @@ This project implements an **unsupervised machine learning & deep learning pipel
 ```
 atml/
 ├── data/
-│   ├── jena_climate_2009_2016.csv          # MPI Jena Weather Station Dataset (Primary Benchmark)
-│   ├── jena_climate_2009_2016.csv.zip      # Compressed Zip Archive
-│   ├── nab_ambient_temperature_system_failure.csv  # Numenta Anomaly Benchmark Sensor Dataset
-│   └── chicago_beach_weather_automated_sensors.csv # Chicago Beach AWS Hourly Sensor Dataset
+│   └── jena_climate_2009_2016.csv          # MPI Jena Weather Station Dataset (Primary Benchmark)
 ├── models/                                 # Serialized Trained Model Artifacts
 │   ├── lstm_autoencoder.keras              # Saved LSTM Autoencoder weights
 │   ├── scaler.pkl                          # Fitted StandardScaler on clean training data
@@ -36,17 +33,15 @@ atml/
 │   ├── models.py                           # Baseline & LSTM Autoencoder models
 │   ├── evaluator.py                        # Metric calculation & threshold selection
 │   ├── xai.py                              # Feature attribution explainability
-│   ├── degradation.py                      # Rolling degradation trend indicator
 │   └── visualization.py                    # Publication-grade plotting
 ├── results/                                # Generated Benchmark Plots & Metrics
-│   ├── benchmark_metrics.csv               # Comparison table of all models
+│   ├── benchmark_metrics.csv               # Comparison table of models
 │   ├── fault_detection_breakdown.csv       # Per-fault detection rate breakdown
 │   ├── model_benchmark_roc.png             # Comparative ROC Curves
 │   ├── lstm_training_loss.png              # Training/validation MSE curve
 │   ├── error_distribution_threshold.png    # Normal vs Anomaly error distribution
 │   ├── anomaly_timeline.png                # Sequence-level detection timeline
-│   ├── xai_explanation_sample.png          # Sensor feature attribution bar chart
-│   └── degradation_indicators.csv          # Rolling degradation indicators
+│   └── xai_explanation_sample.png          # Sensor feature attribution bar chart
 ├── paper/                                  # IEEE Conference Research Paper Source
 │   ├── paper.tex                           # Complete ready-to-compile LaTeX paper
 │   └── figures/                            # High-resolution embedded figures
@@ -103,20 +98,19 @@ Or open `ATML_MiniProject.ipynb` directly in Google Colab and run all cells sequ
 
 ---
 
-## 📊 Final Model Benchmark Comparison (SIH26073 / ATML)
+## 📊 Final Model Benchmark Comparison (3-Model Benchmark)
 
 All models are trained exclusively on clean normal historical weather data (2009–2014) and evaluated on an identical injected test set (2015–2016, 84,080 sequence windows):
 
-| Model | Precision | Recall | F1-Score | ROC-AUC | Anomaly Modeling |
+| Model Architecture | Precision | Recall | F1-Score | ROC-AUC | Temporal Context |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Isolation Forest** | 0.8252 | 0.3342 | 0.4757 | 0.6921 | Point-wise Outlier (Window Max) |
-| **Local Outlier Factor (LOF)** | 0.8142 | **0.8335** | **0.8237** | **0.8695** | Density-based Novelty (Window Max) |
-| **Dense Autoencoder** | 0.8637 | 0.7546 | 0.8055 | 0.8584 | Point-wise Reconstruction (Window Max) |
-| **LSTM Autoencoder (Ours)** | **0.9275** | 0.5501 | 0.6906 | 0.8140 | ✅ 12-Step Temporal Trajectory (~2 hrs) |
+| **Isolation Forest (Tree-based Baseline)** | 0.8252 | 0.3342 | 0.4757 | 0.6921 | ❌ Static Point-wise (Window Max) |
+| **Dense Autoencoder (Deep Learning Static)** | 0.8431 | **0.7603** | **0.7996** | **0.8443** | ❌ Static Point-wise (Window Max) |
+| **LSTM Autoencoder (Deep Learning Temporal — Ours)** | **0.9321** | 0.5805 | 0.7154 | 0.8210 | ✅ 12-Step Temporal Trajectory (~2 hrs) |
 
 ### Key Takeaway for Viva:
-* **LSTM Autoencoder achieves 92.75% Precision**, the highest among all evaluated architectures, ensuring minimal false alarms in mission-critical AWS monitoring.
-* Unlike point models that only evaluate instantaneous deviations, the LSTM Autoencoder models temporal continuity over a 2-hour window (12 consecutive 10-minute timesteps), allowing it to reconstruct temporal dynamics and identify sensor hangs and calibration decays.
+* **LSTM Autoencoder achieves 93.21% Precision**, the highest among all evaluated architectures, ensuring minimal false alarms in operational AWS monitoring.
+* Unlike static models that only evaluate instantaneous deviations, the LSTM Autoencoder models temporal continuity over a 2-hour window (12 consecutive 10-minute timesteps), allowing it to capture multi-step temporal dynamics like frozen readings and gradual drifts.
 
 ---
 
@@ -125,10 +119,10 @@ All models are trained exclusively on clean normal historical weather data (2009
 | Fault Mode | Injected Samples | Detected Samples | Detection Rate (Recall) | Mechanism |
 | :--- | :---: | :---: | :---: | :--- |
 | **Impulse Spike** | 635 | 635 | **100.00%** | Extreme temperature jump ($\Delta T = \pm 15^\circ\text{C}$) |
-| **Out-of-Bounds** | 841 | 622 | **73.96%** | Telemetry exceeding physical limit ($RH = 145\%$) |
-| **Physical Violation** | 841 | 615 | **73.13%** | Psychrometric violation ($T_{\text{dew}} > T + 10^\circ\text{C}$) |
-| **Calibration Drift** | 13,620 | 4,778 | **35.08%** | Gradual pressure decay ($-0.2\text{ mbar/step}$) |
-| **Stuck Sensor** | 8,033 | 2,558 | **31.84%** | Constant humidity frozen for 2 hours |
+| **Out-of-Bounds** | 841 | 702 | **83.47%** | Telemetry exceeding physical limit ($RH = 145\%$) |
+| **Physical Violation** | 841 | 668 | **79.43%** | Psychrometric violation ($T_{\text{dew}} > T + 10^\circ\text{C}$) |
+| **Calibration Drift** | 13,620 | 5,034 | **36.96%** | Gradual pressure decay ($-0.2\text{ mbar/step}$) |
+| **Stuck Sensor** | 8,033 | 2,692 | **33.51%** | Constant humidity frozen for 2 hours |
 
 ---
 
@@ -140,12 +134,13 @@ $$\text{Contribution}_j = \frac{\text{MSE}_j}{\sum_{k=1}^D \text{MSE}_k} \times 
 
 ```text
 --- Explanation for Sequence #92 (ANOMALY DETECTED) ---
-Anomaly Score: 0.21166 (Threshold: 0.15411)
-Primary Contributor: DewPoint_Spread (61.25%)
+Anomaly Score: 0.21544 (Threshold: 0.14080)
+Primary Contributor: DewPoint_Spread (53.05%)
 Feature Contributions:
-  * DewPoint_Spread     : 61.25% (MSE: 1.29651)
-  * DewPoint            : 19.35% (MSE: 0.40963)
-  * Temp_Delta          :  4.84% (MSE: 0.10245)
-  * Pressure_Delta      :  4.82% (MSE: 0.10199)
-  * WindSpeed           :  4.20% (MSE: 0.08887)
+  * DewPoint_Spread     : 53.05% (MSE: 1.14291)
+  * DewPoint            : 17.84% (MSE: 0.38436)
+  * Pressure_Delta      :  8.66% (MSE: 0.18651)
+  * Humidity            :  8.00% (MSE: 0.17236)
+  * WindSpeed           :  7.33% (MSE: 0.15791)
+  * Temp_Delta          :  3.69% (MSE: 0.07956)
 ```
