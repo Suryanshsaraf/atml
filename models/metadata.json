@@ -1,0 +1,22 @@
+{
+  "threshold": 0.15411348640918732,
+  "window_size": 12,
+  "feature_cols": [
+    "Temperature",
+    "Pressure",
+    "Humidity",
+    "DewPoint",
+    "WindSpeed",
+    "DewPoint_Spread",
+    "Temp_Delta",
+    "Pressure_Delta",
+    "Hour_Sin",
+    "Hour_Cos"
+  ],
+  "metrics": {
+    "precision": 0.9275279386023967,
+    "recall": 0.5500988201473318,
+    "f1_score": 0.6906101580220303,
+    "roc_auc": 0.8139924758856609
+  }
+}

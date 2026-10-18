@@ -90,3 +90,24 @@ def build_comparison_table(results_dict):
         })
     df_comp = pd.DataFrame(rows)
     return df_comp
+
+def evaluate_by_fault_type(fault_types, y_pred):
+    """
+    Computes detection recall rate for each specific AWS fault mode.
+    """
+    records = []
+    unique_faults = ['Impulse Spike', 'Stuck Sensor', 'Calibration Drift', 'Out-of-Bounds', 'Physical Violation']
+    for fault in unique_faults:
+        mask = (fault_types == fault)
+        total_fault = int(np.sum(mask))
+        if total_fault > 0:
+            detected = int(np.sum(y_pred[mask] == 1))
+            recall = (detected / total_fault) * 100.0
+            records.append({
+                'Fault Mode': fault,
+                'Injected Samples': total_fault,
+                'Detected': detected,
+                'Detection Rate (%)': round(recall, 2)
+            })
+    return pd.DataFrame(records)
+

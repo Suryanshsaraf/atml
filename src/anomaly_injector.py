@@ -18,6 +18,7 @@ def inject_aws_anomalies(df_test, anomaly_rate=0.05, seed=42):
     n_anomalies = int(n_rows * anomaly_rate)
     
     labels = np.zeros(n_rows, dtype=int)
+    fault_types = np.array(['Normal'] * n_rows, dtype=object)
     # Avoid selecting indices right at the end to accommodate multi-step faults
     anomaly_indices = rng.choice(n_rows - 50, size=n_anomalies, replace=False)
     
@@ -32,6 +33,7 @@ def inject_aws_anomalies(df_test, anomaly_rate=0.05, seed=42):
     for idx in spike_idx:
         test_data.loc[idx, 'Temperature'] += rng.choice([15.0, -15.0])
         labels[idx] = 1
+        fault_types[idx] = 'Impulse Spike'
         
     # 2. Stuck Sensor (Humidity constant for 12 timesteps / 2 hours)
     for idx in stuck_idx:
@@ -40,6 +42,7 @@ def inject_aws_anomalies(df_test, anomaly_rate=0.05, seed=42):
             if idx + offset < n_rows:
                 test_data.loc[idx + offset, 'Humidity'] = stuck_val
                 labels[idx + offset] = 1
+                fault_types[idx + offset] = 'Stuck Sensor'
                 
     # 3. Gradual Calibration Drift (-0.2 mbar/step for 18 timesteps / 3 hours)
     for idx in drift_idx:
@@ -47,16 +50,19 @@ def inject_aws_anomalies(df_test, anomaly_rate=0.05, seed=42):
             if idx + offset < n_rows:
                 test_data.loc[idx + offset, 'Pressure'] -= 0.2 * (offset + 1)
                 labels[idx + offset] = 1
+                fault_types[idx + offset] = 'Calibration Drift'
                 
     # 4. Out-of-bounds Sensor Output (Humidity = 145%)
     for idx in bound_idx:
         test_data.loc[idx, 'Humidity'] = 145.0
         labels[idx] = 1
+        fault_types[idx] = 'Out-of-Bounds'
         
     # 5. Physical Law Violation (DewPoint higher than Temperature)
     for idx in physics_idx:
         test_data.loc[idx, 'DewPoint'] = test_data.loc[idx, 'Temperature'] + 10.0
         labels[idx] = 1
+        fault_types[idx] = 'Physical Violation'
         
     # Recalculate derived features post-injection to reflect real sensor readings
     test_data['DewPoint_Spread'] = test_data['Temperature'] - test_data['DewPoint']
@@ -64,4 +70,5 @@ def inject_aws_anomalies(df_test, anomaly_rate=0.05, seed=42):
     test_data['Pressure_Delta'] = test_data['Pressure'].diff().fillna(0)
     
     test_data['Label'] = labels
+    test_data['Fault_Type'] = fault_types
     return test_data, labels
