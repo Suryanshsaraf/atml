@@ -47,7 +47,11 @@ atml/
 │   ├── anomaly_timeline.png                # Sequence-level detection timeline
 │   ├── xai_explanation_sample.png          # Sensor feature attribution bar chart
 │   └── degradation_indicators.csv          # Rolling degradation indicators
+├── paper/                                  # IEEE Conference Research Paper Source
+│   ├── paper.tex                           # Complete ready-to-compile LaTeX paper
+│   └── figures/                            # High-resolution embedded figures
 ├── ATML_MiniProject.ipynb                  # Interactive Google Colab Notebook (Fully Executed)
+├── app.py                                  # Interactive Streamlit Monitoring Dashboard
 ├── demo.py                                 # Instant Viva Demo Script (< 2s execution)
 ├── download_datasets.py                    # Automated dataset downloader script
 ├── train_and_evaluate.py                   # End-to-End Pipeline & Evaluation Script
@@ -58,9 +62,24 @@ atml/
 
 ---
 
-## ⚡ Quick Viva Demo (< 2 Seconds)
+## 🖥️ Interactive Streamlit Monitoring Dashboard
 
-To demonstrate live anomaly detection and XAI explanation during your viva without waiting for model retraining:
+Launch the operational AWS anomaly detection and XAI dashboard in one command:
+
+```bash
+streamlit run app.py
+```
+
+* **Live Sensor KPIs:** Displays real-time Temperature ($^\circ\text{C}$), Pressure ($\text{mbar}$), Humidity ($\%$), and Dew Point Spread ($^\circ\text{C}$).
+* **Telemetry Scenarios:** Switch between Normal Observation, Sudden Temperature Spike (+15°C), Psychrometric Violation ($T_{\text{dew}} > T$), and Out-of-Bounds Sensor Output ($RH=145\%$).
+* **XAI Diagnostics:** Visualizes feature-wise reconstruction error attribution to pinpoint the responsible sensor probe.
+* **Sliding Window Trajectory:** 12-step (2-hour) sequence plot highlighting the anomalous timestamp.
+
+---
+
+## ⚡ Quick Viva Demo CLI (< 2 Seconds)
+
+To run the lightweight command-line demonstration without launching a browser:
 
 ```bash
 python demo.py
