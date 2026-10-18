@@ -386,7 +386,7 @@ def build_pdf(filename="ATML_MiniProject_Viva_Guide.pdf"):
     ))
     story.append(Paragraph(
         "<b>2. Latent Bottleneck & Reconstruction Error:</b><br/>"
-        "Autoencoder input X ko lower-dimensional latent representation Z me compress karta hai aur wapas reconstruct karta hai X̂.<br/>"
+        "Autoencoder input X ko lower-dimensional latent representation Z me compress karta hai aur wapas reconstruct karta hai X_recon.<br/>"
         "• <b>Bottleneck Constraint:</b> 120 input dimensions (12×10) ko 32 dimensions me compress kiya jata hai. Model memorization ke bajaye physical correlations seekhta hai.<br/>"
         "• <b>Reconstruction Error:</b> Normal weather asani se reconstruct hota hai (Low MSE). Faulty sensor physics model ne kabhi dekhi nahi hoti, isliye reconstruction fail ho jata hai (Spike in MSE).",
         body_style
@@ -408,7 +408,7 @@ def build_pdf(filename="ATML_MiniProject_Viva_Guide.pdf"):
         [Paragraph("Bridge", body_bold), Paragraph("RepeatVector", body_style), Paragraph("(None, 12, 32)", code_style), Paragraph("Duplicates 2D latent vector across 12 temporal steps", body_style)],
         [Paragraph("Decoder 1", body_bold), Paragraph("LSTM", body_style), Paragraph("(None, 12, 32)", code_style), Paragraph("32 units, return_sequences=True, ReLU activation", body_style)],
         [Paragraph("Decoder 2", body_bold), Paragraph("LSTM", body_style), Paragraph("(None, 12, 64)", code_style), Paragraph("64 units, return_sequences=True, ReLU activation", body_style)],
-        [Paragraph("Output", body_bold), Paragraph("TimeDistributed", body_style), Paragraph("(None, 12, 10)", code_style), Paragraph("Dense(10) applied to each step to reconstruct X̂", body_style)]
+        [Paragraph("Output", body_bold), Paragraph("TimeDistributed", body_style), Paragraph("(None, 12, 10)", code_style), Paragraph("Dense(10) applied to each step to reconstruct X_recon", body_style)]
     ]
     arch_table = Table(arch_data, colWidths=[65, 80, 105, 272])
     arch_table.setStyle(TableStyle([
@@ -427,11 +427,11 @@ def build_pdf(filename="ATML_MiniProject_Viva_Guide.pdf"):
         "• <b>LSTM Cell Gate Equations:</b><br/>"
         "&nbsp;&nbsp;&nbsp;&nbsp;1. Forget Gate: <i>f_t = σ(W_f · [h_{t-1}, x_t] + b_f)</i> &nbsp; (Discards irrelevant historical info)<br/>"
         "&nbsp;&nbsp;&nbsp;&nbsp;2. Input Gate: <i>i_t = σ(W_i · [h_{t-1}, x_t] + b_i)</i> &nbsp; (Decides which new sensor inputs to store)<br/>"
-        "&nbsp;&nbsp;&nbsp;&nbsp;3. Candidate Cell State: <i>C̃_t = tanh(W_c · [h_{t-1}, x_t] + b_c)</i><br/>"
-        "&nbsp;&nbsp;&nbsp;&nbsp;4. Memory Cell Update: <i>C_t = f_t * C_{t-1} + i_t * C̃_t</i> &nbsp; (Long-term temporal cell state)<br/>"
+        "&nbsp;&nbsp;&nbsp;&nbsp;3. Candidate Cell State: <i>C_tilde_t = tanh(W_c · [h_{t-1}, x_t] + b_c)</i><br/>"
+        "&nbsp;&nbsp;&nbsp;&nbsp;4. Memory Cell Update: <i>C_t = f_t * C_{t-1} + i_t * C_tilde_t</i> &nbsp; (Long-term temporal cell state)<br/>"
         "&nbsp;&nbsp;&nbsp;&nbsp;5. Output Gate & Hidden State: <i>o_t = σ(W_o · [h_{t-1}, x_t] + b_o)</i>, &nbsp; <i>h_t = o_t * tanh(C_t)</i><br/>"
         "• <b>Window Reconstruction Error (Objective Loss Function):</b><br/>"
-        "&nbsp;&nbsp;&nbsp;&nbsp;<i>MSE(X, X̂) = (1 / (L × D)) ∑_{t=1}^{L} ∑_{j=1}^{D} (X_{t,j} - X̂_{t,j})²</i> &nbsp; [Where L=12, D=10]",
+        "&nbsp;&nbsp;&nbsp;&nbsp;<i>MSE(X, X_recon) = (1 / (L × D)) ∑_{t=1}^{L} ∑_{j=1}^{D} (X_{t,j} - X_recon_{t,j})²</i> &nbsp; [Where L=12, D=10]",
         body_style
     ))
     story.append(Spacer(1, 4))
@@ -457,7 +457,7 @@ def build_pdf(filename="ATML_MiniProject_Viva_Guide.pdf"):
     story.append(Paragraph(
         "<b>2. Explainable AI (XAI) - Fault Attribution Formulation:</b><br/>"
         "Model sirf 'Anomaly' declare nahi karta, faulty sensor pinpoint karta hai:<br/>"
-        "• <b>Feature-wise MSE:</b> <i>MSE_j = (1 / L) ∑_{t=1}^{L} (X_{t,j} - X̂_{t,j})²</i> &nbsp; (Har sensor ka alag error calculate hota hai)<br/>"
+        "• <b>Feature-wise MSE:</b> <i>MSE_j = (1 / L) ∑_{t=1}^{L} (X_{t,j} - X_recon_{t,j})²</i> &nbsp; (Har sensor ka alag error calculate hota hai)<br/>"
         "• <b>Percentage Fault Contribution:</b> <i>C_j = (MSE_j / ∑_{k=1}^{D} MSE_k) × 100%</i><br/>"
         "• <b>Root-Cause Attribution:</b> <i>Primary Faulty Sensor = argmax_j (C_j)</i>. Dashboard me ye pie chart aur bar chart me dikhta hai.",
         body_style
@@ -491,7 +491,7 @@ def build_pdf(filename="ATML_MiniProject_Viva_Guide.pdf"):
 
     story.append(make_box(
         "Dense AE has higher Recall (76%) and F1 (0.80), why do you claim LSTM AE is superior?",
-        "<i>\"Ma'am, in operational Automatic Weather Stations, <b>Precision is the primary economic metric</b>. AWS networks are deployed in remote mountainous terrains; dispatching a maintenance crew on a false alarm costs ₹30,000–₹50,000. Dense AE's 84.3% precision means ~16% of dispatched alarms are false trips, causing extreme operator alarm fatigue.<br/>"
+        "<i>\"Ma'am, in operational Automatic Weather Stations, <b>Precision is the primary economic metric</b>. AWS networks are deployed in remote mountainous terrains; dispatching a maintenance crew on a false alarm costs Rs. 30,000 - 50,000. Dense AE's 84.3% precision means ~16% of dispatched alarms are false trips, causing extreme operator alarm fatigue.<br/>"
         "Our LSTM Autoencoder achieves <b>93.21% Precision</b>. When our model triggers an alarm, operators can be &gt;93% confident that a physical sensor is broken. Furthermore, Dense AE is temporally blind and cannot distinguish continuous sequence drift from normal rapid weather shifts.\"</i>",
         "trap"
     ))
@@ -515,7 +515,7 @@ def build_pdf(filename="ATML_MiniProject_Viva_Guide.pdf"):
     ))
     story.append(Spacer(1, 4))
 
-    story.append(Paragraph("Top 5 Rapid-Fire Viva Q&As for Ma'am", h2_style))
+    story.append(Paragraph("Top 5 Rapid-Fire Viva Q&A for Ma'am", h2_style))
     qa_list = [
         ("Q1: How was the model trained if it's unsupervised?", "Trained exclusively on 80% chronologically clean weather data for 15 epochs using Adam optimizer and MSE loss. It was never exposed to synthetic anomalies during training."),
         ("Q2: Why did you remove LOF (Local Outlier Factor)?", "LOF requires computing pair-wise distance matrices with O(N²) time complexity. On 420,000 rows, LOF exceeds memory limits and is computationally unfeasible for real-time edge telemetry."),
