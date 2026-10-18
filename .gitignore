@@ -16,7 +16,9 @@ venv/
 ENV/
 .ipynb_checkpoints
 
-# IDEs
+# IDEs & OS
 .vscode/
 .idea/
 *.swp
+.DS_Store
+
