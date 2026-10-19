@@ -166,34 +166,41 @@ with c_left:
     top_pct = contributions[top_idx]
     
     if is_anomaly:
-        st.error(f"🚨 **Primary Malfunctioning Sensor:** `{top_sensor}` &nbsp;(**{top_pct:.1f}%** contribution to anomaly)")
-    else:
-        st.success(f"🟢 **Telemetry Healthy:** No malfunctioning sensor detected. (Residual error is within baseline variance; highest residual: `{top_sensor}` at {top_pct:.1f}%)")
-    
-    # Horizontal Bar Chart
-    sorted_indices = np.argsort(contributions)
-    sorted_feats = [feature_cols[i] for i in sorted_indices]
-    sorted_pcts = [contributions[i] for i in sorted_indices]
-    
-    fig, ax = plt.subplots(figsize=(6, 3.8))
-    if is_anomaly:
+        st.error(f"🚨 **Primary Malfunctioning Sensor:** `{top_sensor}` &nbsp;(**{top_pct:.1f}%** contribution)")
+        
+        # Horizontal Bar Chart for Anomaly Breakdown
+        sorted_indices = np.argsort(contributions)
+        sorted_feats = [feature_cols[i] for i in sorted_indices]
+        sorted_pcts = [contributions[i] for i in sorted_indices]
+        
+        fig, ax = plt.subplots(figsize=(6, 3.8))
         colors = ['#EF4444' if f == top_sensor else '#3B82F6' for f in sorted_feats]
-        ax.set_xlabel("Anomaly Error Contribution (%)", fontsize=9)
+        bars = ax.barh(sorted_feats, sorted_pcts, color=colors)
+        ax.set_xlabel("Fault Attribution Contribution (%)", fontsize=9)
+        ax.set_xlim(0, max(sorted_pcts) + 15)
+        ax.grid(True, alpha=0.2, axis='x')
+        
+        for bar in bars:
+            w = bar.get_width()
+            if w > 1.0:
+                ax.text(w + 1, bar.get_y() + bar.get_height()/2, f"{w:.1f}%", va='center', fontsize=8, fontweight='bold')
+                
+        plt.tight_layout()
+        st.pyplot(fig)
+        plt.close(fig)
     else:
-        colors = ['#10B981' for _ in sorted_feats]
-        ax.set_xlabel("Baseline Residual Noise Distribution (%)", fontsize=9)
-    bars = ax.barh(sorted_feats, sorted_pcts, color=colors)
-    ax.set_xlim(0, max(sorted_pcts) + 15)
-    ax.grid(True, alpha=0.2, axis='x')
-    
-    for bar in bars:
-        w = bar.get_width()
-        if w > 1.0:
-            ax.text(w + 1, bar.get_y() + bar.get_height()/2, f"{w:.1f}%", va='center', fontsize=8, fontweight='bold')
+        st.success("🟢 **All 10 Sensors Functioning Normally**")
+        st.markdown(
+            f"""
+            - **Current Reconstruction MSE:** `{reconstruction_error:.5f}`
+            - **Safety Threshold (τ):** `{threshold:.5f}`
+            - **Operating Margin:** Model is operating at **{reconstruction_error / threshold * 100:.1f}%** of anomaly limit.
             
-    plt.tight_layout()
-    st.pyplot(fig)
-    plt.close(fig)
+            ---
+            *ℹ️ **Note on XAI:** Root-cause fault attribution is only computed when an anomaly is active. To see XAI in action, select **'Scenario 2: Inject Impulse Spike'** or **'Scenario 3: Physical Law Violation'** in the left sidebar!*
+            """
+        )
+        st.progress(min(float(reconstruction_error / threshold), 1.0), text=f"Error Load: {reconstruction_error / threshold * 100:.1f}% of Threshold")
 
 with c_right:
     st.subheader("📈 2-Hour Sensor Telemetry Trajectory")
