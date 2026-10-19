@@ -209,11 +209,11 @@ def build_pdf(filename="ATML_MiniProject_Viva_Guide.pdf"):
     story.append(HRFlowable(width="100%", thickness=1.2, color=SECONDARY, spaceBefore=0, spaceAfter=6))
 
     meta_data = [
-        [Paragraph("<b>Institution:</b>", meta_label), Paragraph("SVKM's NMIMS MPSTME, Mumbai", meta_val),
-         Paragraph("<b>Course Code:</b>", meta_label), Paragraph("702AI0C018 (ATML)", meta_val)],
+        [Paragraph("<b>Institution:</b>", meta_label), Paragraph("SVKM's NMIMS MPSTME, Navi Mumbai", meta_val),
+         Paragraph("<b>Authors:</b>", meta_label), Paragraph("Suryansh Saraf & Pratham Deepak", meta_val)],
         [Paragraph("<b>Academic Program:</b>", meta_label), Paragraph("B.Tech 7th Sem (AI & DS)", meta_val),
-         Paragraph("<b>Domain Origin:</b>", meta_label), Paragraph("SIH26073 / MoES / IMD", meta_val)],
-        [Paragraph("<b>Primary Architecture:</b>", meta_label), Paragraph("Temporal LSTM Autoencoder (62,378 params)", meta_val),
+         Paragraph("<b>Course Code:</b>", meta_label), Paragraph("702AI0C018 (ATML)", meta_val)],
+        [Paragraph("<b>Primary Architecture:</b>", meta_label), Paragraph("Temporal LSTM Autoencoder (62k params)", meta_val),
          Paragraph("<b>Winning Metric:</b>", meta_label), Paragraph("<b>93.21% Precision</b> (vs 82.5% IF, 84.3% Dense)", meta_val)]
     ]
     meta_table = Table(meta_data, colWidths=[80, 181, 80, 181])
