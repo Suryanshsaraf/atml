@@ -119,11 +119,11 @@ if scenario == "Scenario 2: Sudden Temperature Spike (+15°C)":
     active_sample['Temp_Delta'] = active_sample['Temperature'].diff().fillna(0)
 
 elif scenario == "Scenario 3: Psychrometric Violation (Tdew > T)":
-    active_sample.loc[window_size - 1, 'DewPoint'] = active_sample.loc[window_size - 1, 'Temperature'] + 12.0
+    active_sample.loc[window_size - 1, 'DewPoint'] = active_sample.loc[window_size - 1, 'Temperature'] + 15.0
     active_sample['DewPoint_Spread'] = active_sample['Temperature'] - active_sample['DewPoint']
 
 elif scenario == "Scenario 4: Out-of-Bounds Sensor Output (RH = 145%)":
-    active_sample.loc[window_size - 1, 'Humidity'] = 145.0
+    active_sample.loc[window_size - 2:, 'Humidity'] = 145.0
 
 # Display Current Reading KPI Cards (Latest timestep in window)
 latest = active_sample.iloc[-1]
